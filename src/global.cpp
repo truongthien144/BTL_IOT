@@ -25,6 +25,11 @@ String wifi_password = "svkhktmt";
 boolean isWifiConnected = false;
 SemaphoreHandle_t xBinarySemaphoreInternet = xSemaphoreCreateBinary();
 
+// semaphores for task sync - created later in setup()
+SemaphoreHandle_t xSemaphoreLED = NULL;
+SemaphoreHandle_t xSemaphoreNEO = NULL;
+SemaphoreHandle_t xSemaphoreLCD = NULL;
+
 // Manual LED control defaults
 bool led1_state = false;
 bool led1_manual = false;

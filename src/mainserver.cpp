@@ -4,8 +4,8 @@
 // use the WiFi helpers from task_wifi
 #include "task_wifi.h"
 
-// server instance
-WebServer server(80);
+// server instance (internal linkage to avoid duplicate symbol across translation units)
+static WebServer server(80);
 
 unsigned long connect_start_ms = 0;
 bool connecting = false;
@@ -281,6 +281,7 @@ String settingsPage()
 }
 
 // ========== Handlers ==========
+        // startAP is implemented in task_wifi.cpp to keep WiFi functions centralized
 void handleRoot() { server.send(200, "text/html", mainPage()); }
 
 void handleToggle()

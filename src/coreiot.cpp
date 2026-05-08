@@ -1,11 +1,8 @@
 #include "coreiot.h"
 
-// ----------- CONFIGURE THESE! -----------
-// const char* coreIOT_Server = "10.235.76.226";  
-const char* coreIOT_Server = "app.coreiot.io";  
-const char* coreIOT_Token = "Ew6cbZNy9Q9AZfGXlX5R";   // Device Access Token
-const int   mqttPort = 1883;
-// ----------------------------------------
+// Default fallbacks (overridden by saved config in globals when available)
+const char* DEFAULT_COREIOT_SERVER = "app.coreiot.io";
+const int DEFAULT_MQTT_PORT = 1883;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -19,18 +16,34 @@ void reconnect() {
     //if (client.connect("ESP32Client", coreIOT_Token, NULL)) {
     String clientId = "ESP32Client-";
     clientId += String(random(0xffff), HEX);
+    // Use configured token (CORE_IOT_TOKEN) as username if available
+    const char *token = NULL;
+    if (!CORE_IOT_TOKEN.isEmpty()) token = CORE_IOT_TOKEN.c_str();
 
-    if (client.connect(clientId.c_str())) {
-        
-      Serial.println("connected to CoreIOT Server!");
-      client.subscribe("v1/devices/me/rpc/request/+");
-      Serial.println("Subscribed to v1/devices/me/rpc/request/+");
-
+    if (token != NULL) {
+      if (client.connect(clientId.c_str(), token, NULL)) {
+        Serial.println("connected to CoreIOT Server!");
+        client.subscribe("v1/devices/me/rpc/request/+");
+        Serial.println("Subscribed to v1/devices/me/rpc/request/+");
+      } else {
+        Serial.print("failed, rc=");
+        Serial.print(client.state());
+        Serial.println(" try again in 5 seconds");
+        delay(5000);
+      }
     } else {
-      Serial.print("failed, rc=");
-      Serial.print(client.state());
-      Serial.println(" try again in 5 seconds");
-      delay(5000);
+      // no token configured, try anonymous connect
+      if (client.connect(clientId.c_str())) {
+        
+        Serial.println("connected to CoreIOT Server (no-token)!");
+        client.subscribe("v1/devices/me/rpc/request/+");
+        Serial.println("Subscribed to v1/devices/me/rpc/request/+");
+      } else {
+        Serial.print("failed, rc=");
+        Serial.print(client.state());
+        Serial.println(" try again in 5 seconds");
+        delay(5000);
+      }
     }
   }
 }
@@ -102,7 +115,10 @@ void setup_coreiot(){
 
   Serial.println(" Connected!");
 
-  client.setServer(CORE_IOT_SERVER.c_str(), CORE_IOT_PORT.toInt());
+  // configure MQTT server and port (use saved config if available)
+  const char *server = (CORE_IOT_SERVER.isEmpty() ? DEFAULT_COREIOT_SERVER : CORE_IOT_SERVER.c_str());
+  uint16_t port = (CORE_IOT_PORT.isEmpty() ? DEFAULT_MQTT_PORT : (uint16_t)CORE_IOT_PORT.toInt());
+  client.setServer(server, port);
   client.setCallback(callback);
 
 }

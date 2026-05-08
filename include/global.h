@@ -45,4 +45,8 @@ extern bool isAPMode;
 
 extern boolean isWifiConnected;
 extern SemaphoreHandle_t xBinarySemaphoreInternet;
+// Semaphores for task synchronization (Task requirements)
+extern SemaphoreHandle_t xSemaphoreLED;   // signaled when temperature condition changes
+extern SemaphoreHandle_t xSemaphoreNEO;   // signaled when humidity condition changes
+extern SemaphoreHandle_t xSemaphoreLCD;   // signaled when new sensor data is available for display
 #endif

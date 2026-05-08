@@ -10,45 +10,59 @@ void neo_blinky(void *pvParameters){
     strip.clear();
     strip.show();
 
-    while(1) {                          
-        // Manual override: steady on/off
-        if (led2_manual) {
-            if (led2_state) {
-                strip.setPixelColor(0, strip.Color(255, 255, 255));
-            } else {
-                strip.setPixelColor(0, strip.Color(0, 0, 0));
+    while(1) {
+        // Wait for a humidity change signal
+        if (xSemaphoreTake(xSemaphoreNEO, portMAX_DELAY) == pdTRUE)
+        {
+            // honor manual override
+            if (led2_manual)
+            {
+                if (led2_state)
+                    strip.setPixelColor(0, strip.Color(255, 255, 255));
+                else
+                    strip.setPixelColor(0, strip.Color(0, 0, 0));
+                strip.show();
+                vTaskDelay(pdMS_TO_TICKS(1000));
+                continue;
             }
-            strip.show();
-            vTaskDelay(200);
-            continue;
-        }
 
-        uint8_t severity = max((uint8_t)glob_temp_alert_level, (uint8_t)glob_hum_alert_level);
+            // Choose color/pattern based on humidity severity
+            uint8_t severity = (uint8_t)glob_hum_alert_level;
 
-        if (severity == ALERT_NONE) {
-            // Blue heartbeat blink
-            strip.setPixelColor(0, strip.Color(0, 0, 255));
-            strip.show();
-            vTaskDelay(500);
-            strip.setPixelColor(0, strip.Color(0, 0, 0));
-            strip.show();
-            vTaskDelay(500);
-        } else if (severity == ALERT_WARN) {
-            // Warning: amber/orange blink
-            strip.setPixelColor(0, strip.Color(255, 165, 0));
-            strip.show();
-            vTaskDelay(500);
-            strip.setPixelColor(0, strip.Color(0, 0, 0));
-            strip.show();
-            vTaskDelay(500);
-        } else { // ALERT_CRIT
-            // Critical: fast red blink
-            strip.setPixelColor(0, strip.Color(255, 0, 0));
-            strip.show();
-            vTaskDelay(150);
-            strip.setPixelColor(0, strip.Color(0, 0, 0));
-            strip.show();
-            vTaskDelay(150);
+            int cycles = 6;
+            for (int c = 0; c < cycles; ++c)
+            {
+                if (severity == ALERT_NONE)
+                {
+                    // Normal: blue slow pulse
+                    strip.setPixelColor(0, strip.Color(0, 0, 200));
+                    strip.show();
+                    vTaskDelay(pdMS_TO_TICKS(800));
+                    strip.setPixelColor(0, strip.Color(0, 0, 0));
+                    strip.show();
+                    vTaskDelay(pdMS_TO_TICKS(400));
+                }
+                else if (severity == ALERT_WARN)
+                {
+                    // Warning: amber
+                    strip.setPixelColor(0, strip.Color(255, 165, 0));
+                    strip.show();
+                    vTaskDelay(pdMS_TO_TICKS(500));
+                    strip.setPixelColor(0, strip.Color(0, 0, 0));
+                    strip.show();
+                    vTaskDelay(pdMS_TO_TICKS(300));
+                }
+                else // ALERT_CRIT
+                {
+                    // Critical: red fast blink
+                    strip.setPixelColor(0, strip.Color(255, 0, 0));
+                    strip.show();
+                    vTaskDelay(pdMS_TO_TICKS(200));
+                    strip.setPixelColor(0, strip.Color(0, 0, 0));
+                    strip.show();
+                    vTaskDelay(pdMS_TO_TICKS(150));
+                }
+            }
         }
     }
 }
