@@ -1,8 +1,8 @@
 #include "coreiot.h"
 
 // ----------- CONFIGURE THESE! -----------
-const char* coreIOT_Server = "10.235.76.226";  
-const char* coreIOT_Token = "g7drm1amhd3dchr379xu";   // Device Access Token
+const char* coreIOT_Server = "app.coreiot.io";  
+const char* coreIOT_Token = "vEglOxUTvTIXOXadAk8U";   // Device Access Token
 const int   mqttPort = 1883;
 // ----------------------------------------
 

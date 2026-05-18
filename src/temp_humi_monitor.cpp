@@ -1,6 +1,5 @@
 #include "temp_humi_monitor.h"
 DHT20 dht20;
-LiquidCrystal_I2C lcd(33,16,2);
 
 
 void temp_humi_monitor(void *pvParameters){
@@ -30,6 +29,30 @@ void temp_humi_monitor(void *pvParameters){
         //Update global variables for temperature and humidity
         glob_temperature = temperature;
         glob_humidity = humidity;
+
+        // Update alert levels based on thresholds
+        if (temperature < 0) {
+            Serial.println("⚠️ Warning: Invalid temperature reading!");
+            continue; // sensor error or invalid
+        } else if (temperature >= TEMP_CRIT_THRESHOLD) {
+            glob_temp_alert_level = ALERT_CRIT;
+        } else if (temperature >= TEMP_WARN_THRESHOLD) {
+            glob_temp_alert_level = ALERT_WARN;
+        } else {
+            glob_temp_alert_level = ALERT_NONE;
+        }
+
+        if (humidity < 0) {
+            Serial.println("⚠️ Warning: Invalid humidity reading!");
+            continue; // sensor error or invalid
+        } else if (humidity >= HUM_CRIT_THRESHOLD) {
+            glob_hum_alert_level = ALERT_CRIT;
+        } else if (humidity >= HUM_WARN_THRESHOLD) {
+            glob_hum_alert_level = ALERT_WARN;
+        } else {
+            glob_hum_alert_level = ALERT_NONE;
+        }
+
 
         // Print the results
         
