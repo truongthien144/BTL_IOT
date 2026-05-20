@@ -5,6 +5,7 @@
 #include "temp_humi_monitor.h"
 #include "tinyml.h"
 #include "task_lcd.h"
+#include "rfid_task.h"
 
 // include task
 #include "task_check_info.h"
@@ -26,6 +27,7 @@ void setup()
   xTaskCreate(Task_Toggle_BOOT, "Task_Toggle_BOOT", 4096, NULL, 2, NULL);
   xTaskCreate(wifi_web_task, "Task WiFi Webserver", 8192, NULL, 2, NULL);
   xTaskCreate(iot_monitor_task, "Task IoT Monitor", 4096, NULL, 2, NULL);
+  xTaskCreate(rfid_task, "Task RFID", 8192, NULL, 2, NULL);
 }
 
 void loop()
