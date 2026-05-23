@@ -14,6 +14,7 @@ void neo_control_RPC(void *pvParameters){
         if (xSemaphoreTake(xMutexNeoState, (TickType_t)10) == pdTRUE) 
         {
             current_state = neo_state;
+            xSemaphoreGive(xMutexNeoState); 
         } 
         strip.setPixelColor(0, strip.Color(current_state * 255, 0, 0)); // Set pixel 0 to red
         strip.show(); // Update the strip
@@ -45,7 +46,7 @@ void neo_control_RPC(void *pvParameters){
             strip.show();
             vTaskDelay(150);
         }
-        xSemaphoreGive(xMutexNeoState); 
+        
         // Wait for 100 milliseconds
         //vTaskDelay(pdMS_TO_TICKS(100));
     }
