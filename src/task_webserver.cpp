@@ -9,7 +9,7 @@ void Webserver_sendata(String data)
 {
     if (ws.count() > 0)
     {
-        ws.textAll(data); // Gửi đến tất cả client đang kết nối
+        ws.textAll(data); // Send to all connected clients
         Serial.println("📤 [WebSocket] Đã gửi dữ liệu qua WebSocket: " + data);
     }
     // else
@@ -83,7 +83,7 @@ void wifi_web_task(void *pvParameters)
         {
             if (!Wifi_reconnect())
             {
-                Webserver_stop(); // Nếu rớt WiFi thì tắt WebServer
+                Webserver_stop(); // If WiFi drops, stop WebServer
             }
         }
 

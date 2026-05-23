@@ -27,10 +27,10 @@ String wifi_password = "123456789";
 boolean isWifiConnected = false;
 SemaphoreHandle_t xBinarySemaphoreInternet = xSemaphoreCreateBinary();
 
-volatile int neo_state = 0; // Biến toàn cục để lưu trạng thái của NeoPixel
-SemaphoreHandle_t xMutexNeoState = xSemaphoreCreateMutex(); // Mutex để bảo vệ truy cập vào neo_state
+volatile int neo_state = 0; // Global variable to store the state of the NeoPixel
+SemaphoreHandle_t xMutexNeoState = xSemaphoreCreateMutex(); // Mutex to protect access to neo_state
 
 SemaphoreHandle_t xSemaphoreLCD = xSemaphoreCreateMutex();
 
-volatile uint16_t blinkingInterval = 1000U; // Biến toàn cục để lưu khoảng thời gian nháy của LED, mặc định là 1000ms
-SemaphoreHandle_t xMutexBlinkingInterval = xSemaphoreCreateMutex(); // Mutex để bảo vệ truy cập vào blinkingInterval
+volatile uint16_t blinkingInterval = 1000U; // Global variable to store the LED blinking interval, default is 1000ms
+SemaphoreHandle_t xMutexBlinkingInterval = xSemaphoreCreateMutex(); // Mutex to protect access to blinkingInterval

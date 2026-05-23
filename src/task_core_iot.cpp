@@ -228,15 +228,15 @@ void iot_monitor_task(void *pvParameters)
             {
                 last_iot_send = millis();
 
-                // Sử dụng hàm CORE_IOT_sendata có sẵn trong file task_core_iot.cpp
+                // Use CORE_IOT_sendata function in task_core_iot file.
                 // CORE_IOT_sendata("telemetry", "temperature", String(glob_temperature));
                 // CORE_IOT_sendata("telemetry", "humidity", String(glob_humidity));
-                // Tự build chuỗi JSON
+                // Build a JSON string itself
                 String payload = "{\"deviceName\":\"ESP32_YoloUNO\",";
                 payload += "\"temperature\":" + String(glob_temperature) + ",";
                 payload += "\"humidity\":" + String(glob_humidity) + "}";
 
-                // Dùng hàm cấp cao của ThingsBoard để gửi chuỗi JSON tự tạo
+                // Use ThingsBoard high-level function to send the constructed JSON string
                 tb.sendTelemetryJson(payload.c_str());
                 
                 Serial.println("Published raw payload: " + payload);

@@ -98,7 +98,7 @@ void Task_Send_data(void *pvParameters)
         {1, 5, 0, 3, 0, 0, 61, 202},  // Relay 3 OFF
         {1, 5, 0, 31, 0, 0, 252, 207} // Relay ALL OFF
     };
-    bool state = false; // false = bật, true = tắt
+    bool state = false; // false = ON, true = OFF
 
     while (true)
     {
@@ -109,7 +109,7 @@ void Task_Send_data(void *pvParameters)
             {
                 sendModbusCommand(relay_ON[i], sizeof(relay_ON[i]));
                 Serial.println("Bật relay " + String(i));
-                vTaskDelay(1000 / portTICK_PERIOD_MS); // Giữ 1 giây giữa mỗi lần bật
+                vTaskDelay(1000 / portTICK_PERIOD_MS); // Hold 1 second between each relay ON
             }
         }
         else
@@ -119,7 +119,7 @@ void Task_Send_data(void *pvParameters)
             {
                 sendModbusCommand(relay_OFF[i], sizeof(relay_OFF[i]));
                 Serial.println("Tắt relay " + String(i));
-                vTaskDelay(1000 / portTICK_PERIOD_MS); // Giữ 1 giây giữa mỗi lần tắt
+                vTaskDelay(1000 / portTICK_PERIOD_MS); // Hold 1 second between each relay OFF
             }
         }
 
@@ -128,10 +128,10 @@ void Task_Send_data(void *pvParameters)
         else
             Serial.println("✅ Hoàn tất tắt tất cả relay!");
 
-        // Đảo trạng thái cho lần kế tiếp
+        // Reverse state for next iteration
         state = !state;
 
-        // Nghỉ giữa 2 chu kỳ (3 giây)
+        // Relax for 3 seconds before next toggle
         vTaskDelay(3000 / portTICK_PERIOD_MS);
     }
 }

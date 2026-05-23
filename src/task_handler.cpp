@@ -53,10 +53,10 @@ void handleWebSocketMessage(String message)
         Serial.println("PORT: " + CORE_IOT_PORT);
         Serial.println("LOCAL_SERVER: " + LOCAL_SERVER);
 
-        // 👉 Gọi hàm lưu cấu hình
+        // 👉 Call configuration save function
         Save_info_File(WIFI_SSID, WIFI_PASS, CORE_IOT_TOKEN, CORE_IOT_SERVER, CORE_IOT_PORT, LOCAL_SERVER);
 
-        // Phản hồi lại client (tùy chọn)
+        // Respond back to client (optional)
         String msg = "{\"status\":\"ok\",\"page\":\"setting_saved\"}";
         ws.textAll(msg);
     }
